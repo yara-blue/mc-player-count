@@ -1,0 +1,7 @@
+[package]
+name = "mc-player_count"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+craftping = "0.7.0"
