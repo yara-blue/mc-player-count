@@ -17,14 +17,30 @@ fn main() {
         .parse()
         .expect("Port should be a number");
 
+    let mut first = true;
     loop {
         sleep(Duration::from_secs(5));
-        let Ok(mut stream) = TcpStream::connect((hostname.as_str(), port)) else {
-            continue;
+
+        let mut stream = match TcpStream::connect((hostname.as_str(), port)) {
+            Ok(stream) => stream,
+            Err(e) => {
+                if first {
+                    eprintln!("error connecting: {e}");
+                };
+                first = false;
+                continue;
+            }
         };
-        let Ok(response) = ping(&mut stream, &hostname, port) else {
-            continue;
+        let response = match ping(&mut stream, &hostname, port) {
+            Ok(response) => response,
+            Err(e) => {
+                if first {
+                    eprintln!("error pinging: {e}");
+                };
+                first = false;
+                continue;
+            }
         };
-        ("playing: {}", response.online_players);
+        println!("playing: {}", response.online_players);
     }
 }
